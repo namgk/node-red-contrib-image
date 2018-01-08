@@ -26,7 +26,7 @@ module.exports = function(RED) {
     var node = this
 
     node.on("input",function(msg) {
-      if (!msg.payload instanceof Buffer || typeof msg.payload === 'string'){
+      if (typeof msg.payload !== 'string'){
         return
       }
       imageDiff.onInput(msg, node.send.bind(node))

@@ -1,0 +1,22 @@
+{
+  "name": "node-red-contrib-image",
+  "version": "1.0.0",
+  "description": "Simple image processing tasks, wrapper for JIMP library",
+  "main": "index.js",
+  "scripts": {
+    "test": "./node_modules/.bin/mocha test/**/**.spec.js"
+  },
+  "author": "Nam Giang",
+  "license": "MIT",
+  "dependencies": {
+    "chai": "^4.1.2",
+    "jimp": "^0.2.28",
+    "mocha": "^4.0.1",
+    "stream-to-buffer": "^0.1.0"
+  },
+  "node-red": {
+    "nodes": {
+      "image diff": "src/imageDiffNode.js"
+    }
+  }
+}

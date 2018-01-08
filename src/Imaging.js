@@ -28,35 +28,37 @@ function ImageDiff(config) {
 }
 
 ImageDiff.prototype.onInput = function(msg, cb) {
-
-  var img_png = new PNG({width: this.width, height: this.height})
-  img_png.data = Buffer.from(msg.payload)
-
   var that = this
-  StreamToBuffer(img_png.pack(), (err, buffer)=>{
-    Jimp.read(buffer, (err, image)=>{
-      if (that.lastImage){
-        that.distance = Jimp.distance(image, that.lastImage) // 0-1, 0: identical
-        that.diff = Jimp.diff(image, that.lastImage, that.threshold).percent
-      }
-      msg.image_distance = that.distance
-      msg.image_diff = that.diff
-      that.lastImage = image
-      cb(msg)
-    })
+  Jimp.read(Buffer.from(msg.payload, 'base64'), (err, image)=>{
+    if (that.lastImage){
+      that.distance = Jimp.distance(image, that.lastImage) // 0-1, 0: identical
+      that.diff = Jimp.diff(image, that.lastImage, that.threshold).percent
+    }
+    msg.image_distance = that.distance
+    msg.image_diff = that.diff
+    that.lastImage = image
+    cb(msg)
   })
 }
 
-function PngEncoder(config){
-
+function ImageSave(config){
+  this.config = config
 }
 
-PngEncoder.prototype.onInput = function(msg, cb) {
-  var img_png = new PNG({width: this.width, height: this.height})
-  img_png.data = Buffer.from(msg.payload)
-  return PNG.sync.write(img_png);
+ImageSave.prototype.onInput = function(msg, cb) {
+  var that = this
+  Jimp.read(Buffer.from(msg.payload, 'base64'), (err, image)=>{
+    if (err){
+      cb(err)
+      return
+    }
+
+    image.write(that.config.destination)
+    cb()
+  })
 }
 
 module.exports = {
-  ImageDiff: ImageDiff
+  ImageDiff: ImageDiff,
+  ImageSave: ImageSave
 }

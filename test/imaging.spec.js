@@ -1,41 +1,50 @@
 var Imaging = require('../src/Imaging')
 var utils = require('../src/utils')
+var fs = require('fs')
+var Promise  = require('es6-promise');
 
 describe('Imaging module', () => {
   describe('"imageDiff"', () => {
     it('should calculate difference between two images', () => {
     	var imageDiff = new Imaging.ImageDiff()
-    	var readFile = utils.readFile
-    	var img0 = "test/0.jpg";
-			var img1 = "test/1.jpg";
+    	var img0 = fs.readFileSync("test/0.jpg.txt", 'utf8');
+    	var img1 = fs.readFileSync("test/1.jpg.txt", 'utf8');
 
-    	var promises = [readFile(img0), readFile(img1), readFile(img1),  readFile(img0)]
-			return Promise.all(promises).then(buffers=>{
-				buffers.forEach((buffer,i)=>{
-					imageDiff.onInput({payload: buffer}).then(_msg=>{
-						console.log(i, _msg.image_distance, _msg.image_diff)
-					}).catch(_e=>{
-						console.log(_e)
-					})
-				})
-			}).catch(_e=>{
-				console.log(_e)
-			})
-    }).timeout(5000)
+    	var inputMsgs = [img0, img1, img1, img0]
+
+    	var promise = Promise.resolve()
+    	for (var i = 0; i < inputMsgs.length; i++){
+    		(i=>{
+    			promise = promise.then(()=>{
+	    			return new Promise((resolve, reject)=>{
+							imageDiff.onInput({payload: inputMsgs[i]}, (_msg)=>{
+								console.log(i, _msg.image_distance, _msg.image_diff)
+								try {
+									if (i %2 === 0){
+										require('chai').assert(_msg.image_distance === _msg.image_diff)
+									} else {
+										require('chai').assert(_msg.image_distance === 0.265625)
+									}
+									resolve()
+								} catch(e){
+									reject()
+								}
+							})
+	    			})
+    			})
+    		})(i)
+    	}
+    	return promise
+    })
   })
 
-  describe('"png encoder"', () => {
-    it('should encode a buffer into png format', () => {
-    	var pngEncoder = new Imaging.PngEncoder()
-    	var readFile = utils.readFile
-    	var img0 = "test/0.jpg";
-
-    	readFile(img0).then(buffer => {
-    		pngEncoder.onInput(buffer, pngBuffer => {
-    			
-    		})
-    	})
-
+  describe('"image save"', () => {
+    it('should save image from data:urls', (done) => {
+    	var imageSave = new Imaging.ImageSave({destination: "test/0.out.jpg"})
+    	var img0 = fs.readFileSync("test/0.jpg.txt", 'utf8');
+			imageSave.onInput({payload: img0}, (err)=>{
+				done(err)
+			})
     })
   })
 })

@@ -58,7 +58,24 @@ ImageSave.prototype.onInput = function(msg, cb) {
   })
 }
 
+function ImageGrayscale(config){
+  this.config = config
+}
+
+ImageGrayscale.prototype.onInput = function(msg, cb) {
+  var that = this
+  Jimp.read(Buffer.from(msg.payload, 'base64'), (err, image)=>{
+    if (err && that.onError)
+      that.onError(err)
+    else
+      image.greyscale().getBase64(Jimp.MIME_PNG, (err, base64Str)=>{
+        cb({payload: base64Str.replace("data:image/png;base64,", "")})
+      })
+  })
+}
+
 module.exports = {
   ImageDiff: ImageDiff,
-  ImageSave: ImageSave
+  ImageSave: ImageSave,
+  ImageGrayscale: ImageGrayscale
 }

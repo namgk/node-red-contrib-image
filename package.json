@@ -16,7 +16,7 @@
   },
   "node-red": {
     "nodes": {
-      "image diff": "src/imageDiffNode.js"
+      "imaging nodes": "src/imagingNodes.js"
     }
   }
 }

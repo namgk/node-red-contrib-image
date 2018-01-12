@@ -33,5 +33,39 @@ module.exports = function(RED) {
     })
   }
 
-  RED.nodes.registerType("image diff", ImageDiffNode);
+  RED.nodes.registerType("diff", ImageDiffNode);
+
+  function ImageSaveNode(n) {
+    RED.nodes.createNode(this,n);
+
+    var imageSave = new Imaging.ImageSave(n)
+    var node = this
+
+    node.on("input",function(msg) {
+      if (typeof msg.payload !== 'string'){
+        return
+      }
+      imageSave.onInput(msg)
+    })
+  }
+
+  RED.nodes.registerType("save", ImageSaveNode);
+
+  function ImageGrayscaleNode(n) {
+    RED.nodes.createNode(this,n);
+
+    var imageGrayscale = new Imaging.ImageGrayscale(n)
+    var node = this
+
+    imageGrayscale.onError = node.error
+
+    node.on("input",function(msg) {
+      if (typeof msg.payload !== 'string'){
+        return
+      }
+      imageGrayscale.onInput(msg, node.send.bind(node))
+    })
+  }
+
+  RED.nodes.registerType("grayscale", ImageGrayscaleNode);
 }

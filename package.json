@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-image",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Simple image processing tasks, wrapper for JIMP library",
   "main": "index.js",
   "scripts": {
@@ -11,8 +11,7 @@
   "dependencies": {
     "chai": "^4.1.2",
     "jimp": "^0.2.28",
-    "mocha": "^4.0.1",
-    "stream-to-buffer": "^0.1.0"
+    "mocha": "^4.0.1"
   },
   "node-red": {
     "nodes": {

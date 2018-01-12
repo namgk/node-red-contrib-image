@@ -16,7 +16,6 @@
 var Jimp = require("jimp")
 var fs = require('fs')
 var PNG = require('pngjs').PNG
-var StreamToBuffer = require("stream-to-buffer");
 
 function ImageDiff(config) {
   this.distance = 1

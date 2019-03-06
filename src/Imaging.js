@@ -18,6 +18,7 @@ var fs = require('fs')
 var PNG = require('pngjs').PNG
 
 function ImageDiff(config) {
+  console.log('aoiwjef9we092j09f2390j2030923jf23jf092j3f0')
   this.distance = 1
   this.diff = 1
   this.lastImage = null
@@ -33,10 +34,14 @@ ImageDiff.prototype.onInput = function(msg, cb) {
       that.distance = Jimp.distance(image, that.lastImage) // 0-1, 0: identical
       that.diff = Jimp.diff(image, that.lastImage, that.threshold).percent
     }
-    msg.image_distance = that.distance
     msg.image_diff = that.diff
+    msg.payload = that.distance
     that.lastImage = image
-    cb(msg)
+    console.log(that.distance)
+    cb({
+      payload: that.distance,
+      image_diff: that.diff
+    })
   })
 }
 
